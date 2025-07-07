@@ -3,36 +3,78 @@ import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import FilterCard from './FilterCard';
 import Job from './Job';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
+import { setSearchedQuery, setAllJobs } from '@/redux/jobSlice';
+import axios from 'axios';
+import { JOB_API_END_POINT } from '@/utils/constant';
+
+const Spinner = () => (
+  <div className="flex flex-col items-center justify-center py-8">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-[#6A38C2] mb-3"></div>
+    <span className="text-gray-600 dark:text-gray-300 font-medium">Loading jobs...</span>
+  </div>
+);
 
 const Jobs = () => {
-  const { allJobs, searchedQuery } = useSelector(store => store.job);
+  const { allJobs, jobFilters } = useSelector(store => store.job);
+  const filters = jobFilters || { location: '', industry: '', salary: '' };
   const [filterJobs, setFilterJobs] = useState(allJobs);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Always fetch all jobs (no search) on Jobs page mount
+  useEffect(() => {
+    const fetchAllJobs = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/get`, { withCredentials: true });
+        if (res.data.success) {
+          dispatch(setAllJobs(res.data.jobs));
+        }
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllJobs();
+    dispatch(setSearchedQuery(''));
+  }, [dispatch]);
 
   useEffect(() => {
-    if (searchedQuery) {
-      const filteredJobs = allJobs.filter((job) => {
-        return job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-          job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-          job.location.toLowerCase().includes(searchedQuery.toLowerCase())
-      })
-      setFilterJobs(filteredJobs)
-    } else {
-      setFilterJobs(allJobs)
+    let filtered = allJobs;
+    if (filters.location) {
+      filtered = filtered.filter(job => job.location === filters.location);
     }
-  }, [allJobs, searchedQuery]);
+    if (filters.industry) {
+      filtered = filtered.filter(job => job.title === filters.industry);
+    }
+    if (filters.salary) {
+      // Example: filter by salary range string match (customize as needed)
+      filtered = filtered.filter(job => {
+        if (!job.salary) return false;
+        const s = job.salary.toString();
+        return s.includes(filters.salary) || filters.salary.includes(s);
+      });
+    }
+    setFilterJobs(filtered);
+  }, [allJobs, filters]);
 
   return (
-    <div className="h-screen flex flex-col">
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 w-full z-50">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
+      <div className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
-
-      {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto mt-20 mb-16 px-4">
-        <div className='max-w-7xl mx-auto'>
+      <div className="flex-1 mt-[70px] mb-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="font-bold text-xl mb-6 dark:text-gray-100">All Jobs</h1>
+          {loading ? <Spinner /> : null}
+          {error ? (
+            <p className="text-red-500 dark:text-red-400">Failed to load jobs. Please try again.</p>
+          ) : null}
           <div className='flex gap-5'>
             {/* Sidebar filter */}
             <div className='w-[20%]'>
@@ -40,7 +82,7 @@ const Jobs = () => {
             </div>
 
             {/* Job listing */}
-            {filterJobs.length <= 0 ? (
+            {filterJobs.length <= 0 && !loading ? (
               <span>Job not found</span>
             ) : (
               <div className='flex-1'>
@@ -62,11 +104,7 @@ const Jobs = () => {
           </div>
         </div>
       </div>
-
-      {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 w-full z-40">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

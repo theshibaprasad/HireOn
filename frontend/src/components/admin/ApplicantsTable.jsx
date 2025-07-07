@@ -8,6 +8,8 @@ import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { setAllApplicants } from '@/redux/applicationSlice';
+import Chat from '../shared/Chat';
+import { Button } from '../ui/button';
 
 const shortlistingStatus = ['Accepted', 'Rejected'];
 
@@ -26,6 +28,9 @@ const getStatusStyle = (status) => {
 const ApplicantsTable = () => {
   const dispatch = useDispatch();
   const { applicants } = useSelector((store) => store.application);
+  const { user, token } = useSelector((store) => store.auth);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatProps, setChatProps] = useState(null);
 
   const statusHandler = async (status, id) => {
     try {
@@ -50,6 +55,11 @@ const ApplicantsTable = () => {
       transition={{ duration: 0.5 }}
       className="overflow-x-auto"
     >
+      {chatOpen && chatProps && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <Chat {...chatProps} onClose={() => setChatOpen(false)} />
+        </div>
+      )}
       <Table>
         <TableCaption>A list of your recent applied users</TableCaption>
         <TableHeader>
@@ -61,11 +71,15 @@ const ApplicantsTable = () => {
             <TableHead>Date</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Action</TableHead>
+            <TableHead>Chat</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {applicants?.applications?.map((item) => {
-            const status = item.status || 'Pending'; // Fallback for undefined status
+            // Normalize status to Title Case for consistent color and display
+            const statusRaw = item.status || 'Pending';
+            const status =
+              statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1).toLowerCase();
             return (
               <TableRow key={item._id}>
                 <TableCell>{item?.applicant?.fullname}</TableCell>
@@ -73,14 +87,16 @@ const ApplicantsTable = () => {
                 <TableCell>{item?.applicant?.phoneNumber}</TableCell>
                 <TableCell>
                   {item.applicant?.profile?.resume ? (
-                    <a
-                      className="text-blue-600 cursor-pointer"
-                      href={item?.applicant?.profile?.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item?.applicant?.profile?.resumeOriginalName}
-                    </a>
+                    <div className="flex gap-2 items-center">
+                      <a
+                        href={item.applicant.profile.resume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                      >
+                        View
+                      </a>
+                    </div>
                   ) : (
                     <span>NA</span>
                   )}
@@ -118,6 +134,27 @@ const ApplicantsTable = () => {
                       ))}
                     </PopoverContent>
                   </Popover>
+                </TableCell>
+                <TableCell>
+                  {status.toLowerCase() === 'accepted' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setChatProps({
+                          applicationId: item._id,
+                          jobId: item.job,
+                          currentUser: user,
+                          chatPartner: item.applicant,
+                          jwtToken: token,
+                          job: applicants.job
+                        });
+                        setChatOpen(true);
+                      }}
+                    >
+                      Chat
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             );

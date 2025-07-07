@@ -15,7 +15,7 @@ const taglines = [
   'Start Your Next Chapter Here.',
   'Jobs Tailored for Your Dreams.',
   'Search Smart. Work Smarter.',
-  'Fueling India’s Career Journey.',
+  "Fueling India's Career Journey.",
   'Your Dream Job is a Click Away.',
   'Crafting Careers, One Click at a Time.'
 ];
@@ -64,7 +64,7 @@ const HeroSection = () => {
 
         {/* Typewriter Tagline without cursor */}
         <motion.span
-          className='mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#F83002] font-medium min-h-[2.5rem]'
+          className='mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#F83002] font-medium min-h-[2.5rem] dark:bg-gray-800 dark:text-orange-300'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -116,20 +116,23 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className='relative w-full max-w-xl mx-auto mt-4'
         >
-          <input
-            type='text'
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && searchJobHandler()}
-            placeholder='Find your dream jobs'
-            className='w-full py-3 pl-4 pr-12 text-sm bg-white border border-gray-200 rounded-full shadow-sm outline-none'
-          />
-          <Button
-            onClick={searchJobHandler}
-            className='absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-[#6A38C2] text-white h-9 w-9 p-2 flex items-center justify-center transition hover:bg-[#5b2ca0] active:scale-95'
-          >
-            <Search className='h-4 w-4' />
-          </Button>
+          <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-full px-2 py-1 shadow-sm bg-white dark:bg-gray-900">
+            <input
+              type='text'
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && searchJobHandler()}
+              placeholder='Find your dream jobs'
+              className="flex-1 outline-none bg-transparent text-sm text-gray-700 dark:text-gray-100 px-4 py-3"
+            />
+            <Button
+              onClick={searchJobHandler}
+              className='ml-2 rounded-full bg-[#6A38C2] text-white h-10 w-10 p-0 flex items-center justify-center transition hover:bg-[#5b2ca0] active:scale-95'
+              type="button"
+            >
+              <Search className='h-5 w-5' />
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

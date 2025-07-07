@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { useDispatch } from 'react-redux'
-import { setSearchedQuery } from '@/redux/jobSlice'
+import { setJobFilters } from '@/redux/jobSlice'
 
 const fitlerData = [
     {
@@ -20,37 +20,56 @@ const fitlerData = [
 ]
 
 const FilterCard = () => {
-    const [selectedValue, setSelectedValue] = useState('');
+    const [filters, setFilters] = useState({ location: '', industry: '', salary: '' });
     const dispatch = useDispatch();
-    const changeHandler = (value) => {
-        setSelectedValue(value);
+    const changeHandler = (type, value) => {
+        setFilters((prev) => ({ ...prev, [type]: value }));
     }
-    useEffect(()=>{
-        dispatch(setSearchedQuery(selectedValue));
-    },[selectedValue]);
+    useEffect(() => {
+        dispatch(setJobFilters(filters));
+    }, [filters, dispatch]);
+    const clearFilters = () => {
+        setFilters({ location: '', industry: '', salary: '' });
+    }
     return (
-        <div className='w-full bg-white p-3 rounded-md'>
-            <h1 className='font-bold text-lg'>Filter Jobs</h1>
-            <hr className='mt-3' />
-            <RadioGroup value={selectedValue} onValueChange={changeHandler}>
-                {
-                    fitlerData.map((data, index) => (
-                        <div>
-                            <h1 className='font-bold text-lg'>{data.fitlerType}</h1>
-                            {
-                                data.array.map((item, idx) => {
-                                    const itemId = `id${index}-${idx}`
-                                    return (
-                                        <div className='flex items-center space-x-2 my-2'>
-                                            <RadioGroupItem value={item} id={itemId} />
-                                            <Label htmlFor={itemId}>{item}</Label>
-                                        </div>
-                                    )
-                                })
-                            }
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 shadow-md">
+            <h2 className="text-lg font-bold mb-2 dark:text-gray-100">Filters</h2>
+            <button onClick={clearFilters} className="mb-3 px-3 py-1 rounded bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm">Clear Filters</button>
+            <RadioGroup value={filters.location} onValueChange={(v) => changeHandler('location', v)}>
+                <h1 className='font-bold text-lg dark:text-gray-100'>Location</h1>
+                {fitlerData[0].array.map((item, idx) => {
+                    const itemId = `loc-${idx}`
+                    return (
+                        <div className='flex items-center space-x-2 my-2 dark:text-gray-100' key={itemId}>
+                            <RadioGroupItem value={item} id={itemId} />
+                            <Label htmlFor={itemId}>{item}</Label>
                         </div>
-                    ))
-                }
+                    )
+                })}
+            </RadioGroup>
+            <RadioGroup value={filters.industry} onValueChange={(v) => changeHandler('industry', v)}>
+                <h1 className='font-bold text-lg dark:text-gray-100'>Industry</h1>
+                {fitlerData[1].array.map((item, idx) => {
+                    const itemId = `ind-${idx}`
+                    return (
+                        <div className='flex items-center space-x-2 my-2 dark:text-gray-100' key={itemId}>
+                            <RadioGroupItem value={item} id={itemId} />
+                            <Label htmlFor={itemId}>{item}</Label>
+                        </div>
+                    )
+                })}
+            </RadioGroup>
+            <RadioGroup value={filters.salary} onValueChange={(v) => changeHandler('salary', v)}>
+                <h1 className='font-bold text-lg dark:text-gray-100'>Salary</h1>
+                {fitlerData[2].array.map((item, idx) => {
+                    const itemId = `sal-${idx}`
+                    return (
+                        <div className='flex items-center space-x-2 my-2 dark:text-gray-100' key={itemId}>
+                            <RadioGroupItem value={item} id={itemId} />
+                            <Label htmlFor={itemId}>{item}</Label>
+                        </div>
+                    )
+                })}
             </RadioGroup>
         </div>
     )

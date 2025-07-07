@@ -48,6 +48,7 @@ export const applyJob = async (req, res) => {
 export const getAppliedJobs = async (req,res) => {
     try {
         const userId = req.id;
+        console.log('getAppliedJobs: userId from JWT:', userId);
         const application = await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
             path:'job',
             options:{sort:{createdAt:-1}},
@@ -56,6 +57,7 @@ export const getAppliedJobs = async (req,res) => {
                 options:{sort:{createdAt:-1}},
             }
         });
+        console.log('getAppliedJobs: applications returned:', application);
         if(!application){
             return res.status(404).json({
                 message:"No Applications",

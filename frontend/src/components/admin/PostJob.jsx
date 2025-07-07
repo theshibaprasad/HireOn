@@ -73,7 +73,7 @@ const PostJob = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       <div className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
@@ -83,9 +83,9 @@ const PostJob = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="p-8 border border-gray-200 shadow-xl rounded-3xl bg-white"
+          className="p-8 border border-gray-200 dark:border-gray-800 shadow-xl rounded-3xl bg-white dark:bg-gray-900"
         >
-          <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Post a New Job</h1>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Post a New Job</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label>Title</Label>

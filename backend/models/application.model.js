@@ -15,6 +15,12 @@ const applicationSchema = new mongoose.Schema({
         type:String,
         enum:['pending', 'accepted', 'rejected'],
         default:'pending'
-    }
+    },
+    clearedChats: [
+        {
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            clearedAt: { type: Date, default: Date.now }
+        }
+    ]
 },{timestamps:true});
 export const Application  = mongoose.model("Application", applicationSchema);

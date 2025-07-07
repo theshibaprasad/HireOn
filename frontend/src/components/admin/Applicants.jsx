@@ -29,7 +29,7 @@ const Applicants = () => {
   }, [dispatch, params.id]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       <Navbar />
       <motion.div
         className="max-w-7xl mx-auto px-4 mt-24"
@@ -37,8 +37,10 @@ const Applicants = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className='font-bold text-2xl text-center mb-6'>Applicants ({applicants?.applications?.length || 0})</h1>
-        <ApplicantsTable />
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow">
+          <h1 className="text-2xl font-bold mb-6 dark:text-gray-100">Applicants ({applicants?.applications?.length || 0})</h1>
+          <ApplicantsTable />
+        </div>
       </motion.div>
     </div>
   );

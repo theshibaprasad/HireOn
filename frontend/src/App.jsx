@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Navbar from './components/shared/Navbar'
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
+import SignupRoleSelect from './components/auth/SignupRoleSelect'
+import ForgotPassword from './components/auth/ForgotPassword'
+import ResetPassword from './components/auth/ResetPassword'
+import EmailVerification from './components/EmailVerification'
 import Home from './components/Home'
 import Jobs from './components/Jobs'
 import Browse from './components/Browse'
@@ -15,12 +18,21 @@ import AdminJobs from './components/admin/AdminJobs'
 import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
-import Loader from './components/shared/Loader' // ✅ Import loader here
+import Loader from './components/shared/Loader'
+import SuperAdminLogin from './components/auth/SuperAdminLogin'
+import SuperAdminDashboard from './components/admin/SuperAdminDashboard'
+import ContactForm from './components/ContactForm'
+import GoogleAuthSuccess from './components/auth/GoogleAuthSuccess'
 
 const appRouter = createBrowserRouter([
   { path: '/', element: <Home /> },
   { path: '/login', element: <Login /> },
-  { path: '/signup', element: <Signup /> },
+  { path: '/signup', element: <SignupRoleSelect /> },
+  { path: '/signup/student', element: <Signup /> },
+  { path: '/signup/recruiter', element: <Signup recruiter={true} /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/reset-password/:token', element: <ResetPassword /> },
+  { path: '/verify-email/:token', element: <EmailVerification /> },
   { path: '/jobs', element: <Jobs /> },
   { path: '/description/:id', element: <JobDescription /> },
   { path: '/browse', element: <Browse /> },
@@ -30,21 +42,23 @@ const appRouter = createBrowserRouter([
   { path: '/admin/companies/:id', element: <ProtectedRoute><CompanySetup /></ProtectedRoute> },
   { path: '/admin/jobs', element: <ProtectedRoute><AdminJobs /></ProtectedRoute> },
   { path: '/admin/jobs/create', element: <ProtectedRoute><PostJob /></ProtectedRoute> },
-  { path: '/admin/jobs/:id/applicants', element: <ProtectedRoute><Applicants /></ProtectedRoute> }
+  { path: '/admin/jobs/:id/applicants', element: <ProtectedRoute><Applicants /></ProtectedRoute> },
+  { path: '/superAdmin', element: <SuperAdminLogin /> },
+  { path: '/superadmin/dashboard', element: <SuperAdminDashboard /> },
+  { path: '/contact', element: <ContactForm /> },
+  { path: '/google-auth-success', element: <GoogleAuthSuccess /> },
 ])
 
 function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2500) // Show loader for 2.5s
+    const timer = setTimeout(() => setLoading(false), 2500)
     return () => clearTimeout(timer)
   }, [])
 
   return (
-    <div>
-      {loading ? <Loader /> : <RouterProvider router={appRouter} />}
-    </div>
+    loading ? <Loader /> : <RouterProvider router={appRouter} />
   )
 }
 

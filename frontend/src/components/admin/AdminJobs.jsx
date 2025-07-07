@@ -8,6 +8,7 @@ import AdminJobsTable from './AdminJobsTable';
 import useGetAllAdminJobs from '@/hooks/useGetAllAdminJobs';
 import { setSearchJobByText } from '@/redux/jobSlice';
 import { motion } from 'framer-motion';
+import Footer from '../shared/Footer';
 
 const AdminJobs = () => {
   useGetAllAdminJobs();
@@ -20,16 +21,15 @@ const AdminJobs = () => {
   }, [input]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col">
       <div className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
-
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="pt-[90px] max-w-6xl mx-auto px-4"
+        className="pt-[90px] max-w-6xl mx-auto px-4 flex-1 w-full"
       >
         <div className="flex items-center justify-between my-8">
           <Input
@@ -47,6 +47,7 @@ const AdminJobs = () => {
         </div>
         <AdminJobsTable />
       </motion.div>
+      <Footer />
     </div>
   );
 };
