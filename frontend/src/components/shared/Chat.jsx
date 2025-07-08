@@ -8,7 +8,7 @@ import UserAvatar from './UserAvatar';
 import { Dialog } from '../ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://hireon-74i0.onrender.com/";
 
 const Chat = ({ applicationId, jobId, currentUser, chatPartner, job, company, jwtToken: propJwtToken, onClose }) => {
   const [messages, setMessages] = useState([]);

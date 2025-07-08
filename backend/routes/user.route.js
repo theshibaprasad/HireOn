@@ -14,7 +14,7 @@ import { User } from '../models/user.model.js'; // Correct way to import a named
 
 
 const router = express.Router();
-const FRONTEND_URL = 'http://localhost:8000';
+const FRONTEND_URL = 'https://hireon-74i0.onrender.com';
 
 // Auth routes
 router.route("/register").post(singleUpload, register);

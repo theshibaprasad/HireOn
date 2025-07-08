@@ -65,7 +65,7 @@ const Signup = (props) => {
     }
 
     function handleGoogleSignup() {
-        window.location.href = 'http://localhost:8000/api/auth/google';
+        window.location.href = 'https://hireon-74i0.onrender.com/api/auth/google';
     }
 
     useEffect(()=>{

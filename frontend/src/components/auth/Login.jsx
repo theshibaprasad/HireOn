@@ -54,7 +54,7 @@ const Login = () => {
 
     function handleGoogleLogin(e) {
         e.preventDefault(); // Prevent form submit
-        window.location.href = 'http://localhost:8000/api/auth/google';
+        window.location.href = 'https://hireon-74i0.onrender.com/api/auth/google';
     }
 
     // Handle Google OAuth redirect

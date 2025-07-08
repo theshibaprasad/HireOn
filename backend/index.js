@@ -28,7 +28,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+        origin: process.env.FRONTEND_URL || 'https://hireon-74i0.onrender.com',
         credentials: true,
         methods: ["GET", "POST"]
     },
@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'https://hireon-74i0.onrender.com',
     credentials: true
 };
 app.use(cors(corsOptions));
