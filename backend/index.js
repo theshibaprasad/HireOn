@@ -20,6 +20,7 @@ import jwt from "jsonwebtoken";
 import resumeRouter from './routes/resume.js';
 import passport from './auth/google.js';
 import session from 'express-session';
+import path from "path";
 
 dotenv.config({});
 
@@ -28,8 +29,10 @@ const server = http.createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
         origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-        credentials: true
-    }
+        credentials: true,
+        methods: ["GET", "POST"]
+    },
+    transports: ['websocket', 'polling']
 });
 
 // middleware
@@ -51,7 +54,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const PORT = process.env.PORT || 3003;
-
+const _dirname = path.resolve();
 
 // api's
 app.use("/api/v1/user", userRoute);
@@ -61,6 +64,10 @@ app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use('/api', resumeRouter);
 app.use('/api', userRoute);
+app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.get('*', (_, res) => {
+    res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+})
 
 // Super Admin registration endpoint (for initial setup only)
 app.post("/api/v1/adminsupersign", async (req, res) => {
@@ -158,19 +165,29 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(PORT,()=>{
+// Only start server if not in Vercel environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    server.listen(PORT,()=>{
+        connectDB();
+        console.log(`Server running at port ${PORT}`);
+        
+        // Run cleanup every hour
+        setInterval(cleanupUnverifiedUsers, 60 * 60 * 1000);
+        
+        // Run initial cleanup
+        cleanupUnverifiedUsers();
+    })
+} else {
+    // For Vercel serverless
     connectDB();
-    console.log(`Server running at port ${PORT}`);
-    
-    // Run cleanup every hour
-    setInterval(cleanupUnverifiedUsers, 60 * 60 * 1000);
-    
-    // Run initial cleanup
-    cleanupUnverifiedUsers();
-})
+    console.log(`Serverless function ready`);
+}
 
 // Export io for use in other modules
 export { io };
+
+// Export app for Vercel
+export default app;
 
 // Patch: emit socket event on message delete
 import { deleteMessage as origDeleteMessage } from "./controllers/chat.controller.js";

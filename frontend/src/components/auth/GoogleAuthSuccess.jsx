@@ -13,7 +13,7 @@ const GoogleAuthSuccess = () => {
     if (token) {
       dispatch(setUser({ token }));
       localStorage.setItem('token', token);
-      navigate('/dashboard'); // or change to '/' if you want
+      navigate('/'); // or change to '/' if you want
     } else {
       navigate('/login');
     }

@@ -90,16 +90,38 @@ const Chat = ({ applicationId, jobId, currentUser, chatPartner, job, company, jw
   // Socket.io connection
   useEffect(() => {
     if (!applicationId || !jwtToken) return;
-    const socket = io(SOCKET_URL, { transports: ['websocket'] });
+    
+    // Try WebSocket first, fallback to polling for Vercel
+    const socket = io(SOCKET_URL, { 
+      transports: ['websocket', 'polling'],
+      timeout: 5000,
+      forceNew: true
+    });
+    
     socketRef.current = socket;
-    socket.emit('join_application', { token: jwtToken, applicationId });
+    
+    socket.on('connect', () => {
+      console.log('Socket connected');
+      socket.emit('join_application', { token: jwtToken, applicationId });
+    });
+    
+    socket.on('connect_error', (error) => {
+      console.log('Socket connection error:', error);
+      // Fallback to polling for Vercel serverless
+      if (socket.io.engine.transport.name === 'websocket') {
+        socket.io.engine.transport.name = 'polling';
+      }
+    });
+    
     socket.on('receive_message', (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
+    
     // Listen for message_deleted event
     socket.on('message_deleted', ({ messageId }) => {
       setMessages((prev) => prev.map(m => m._id === messageId ? { ...m, deleted: true } : m));
     });
+    
     return () => {
       socket.disconnect();
     };

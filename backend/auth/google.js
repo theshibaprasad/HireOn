@@ -1,7 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { User } from '../models/user.model.js';
-import jwt from 'jsonwebtoken';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -16,7 +15,6 @@ passport.use(new GoogleStrategy({
   callbackURL: '/api/auth/google/callback',
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log('Google profile:', profile);
     const email = profile.emails[0].value;
     let user = await User.findOne({ email });
     if (!user) {
@@ -34,7 +32,6 @@ passport.use(new GoogleStrategy({
     }
     return done(null, user);
   } catch (err) {
-    console.error('Google OAuth error:', err);
     return done(err, null);
   }
 }));

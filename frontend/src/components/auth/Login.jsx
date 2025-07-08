@@ -66,7 +66,7 @@ const Login = () => {
                 // Save token to Redux and localStorage
                 dispatch(setUser({ token }));
                 localStorage.setItem('token', token);
-                navigate('/dashboard');
+                navigate('/');
             }
         }
     }, []);

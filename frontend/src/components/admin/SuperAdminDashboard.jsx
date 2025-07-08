@@ -215,13 +215,13 @@ const SuperAdminDashboard = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <h2 className="text-2xl font-bold">Contact Messages</h2>
             <div className="flex gap-2 items-center">
-              <input
-                type="text"
-                placeholder="Search by name or email..."
-                value={msgSearch}
-                onChange={e => setMsgSearch(e.target.value)}
-                className="border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100"
-              />
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={msgSearch}
+              onChange={e => setMsgSearch(e.target.value)}
+              className="border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100"
+            />
               <Button size="sm" variant="outline" onClick={fetchMessages} disabled={msgLoading} title="Refresh messages">
                 {msgLoading ? 'Refreshing...' : 'Refresh'}
               </Button>

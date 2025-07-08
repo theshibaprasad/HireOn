@@ -14,7 +14,7 @@ import { User } from '../models/user.model.js'; // Correct way to import a named
 
 
 const router = express.Router();
-const FRONTEND_URL = 'http://localhost:5173';
+const FRONTEND_URL = 'http://localhost:8000';
 
 // Auth routes
 router.route("/register").post(singleUpload, register);
